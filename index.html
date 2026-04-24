@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>For You ❤️</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            color: white;
+            text-align: center;
+
+            background: url("background.jpg") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* LOCK SCREEN */
+        .lock {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: black;
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lock input {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            text-align: center;
+        }
+
+        .lock button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* FADE */
+        .fade {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 2s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            margin-top: 80px;
+        }
+
+        /* GALLERY */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .gallery img {
+            width: 180px;
+            margin: 10px;
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.1);
+        }
+
+        /* BUTTONS */
+        .song-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .song-btn {
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+
+            transition: 0.3s;
+        }
+
+        .song-btn:hover {
+            transform: scale(1.1);
+        }
+
+        #songMessage {
+            opacity: 0;
+            transition: opacity 1s;
+            margin-top: 20px;
+        }
+
+        /* LETTER */
+        .letter {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 20px;
+
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+
+            display: none;
+        }
+
+        .letter.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- 🔐 LOCK SCREEN -->
+<div id="lockScreen" class="lock">
+    <h1>💌 Enter Access Code</h1>
+    <p>clue: tawagan natin na hindi naman masyado ginagamit wahaha</p>
+
+    <input type="password" id="codeInput" placeholder="Enter code...">
+    <br>
+    <button onclick="checkCode()">Unlock</button>
+
+    <p id="error"></p>
+</div>
+
+<!-- 🎬 MAIN SITE -->
+<div id="mainSite" style="display:none;">
+
+    <!-- INTRO -->
+    <div class="section fade">
+        <h1>Enlo, Lia Marie my sugarpie honeybunch hehe 💕</h1>
+        <p>A little something for you, miss sungit.</p>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="section fade">
+        <h2>Some of My Favorite Pics. together 📸</h2>
+        <div class="gallery" id="gallery"></div>
+    </div>
+
+    <!-- SONGS -->
+    <div class="section fade">
+        <h2>For You 🎶</h2>
+
+        <div class="song-container">
+            <button class="song-btn" onclick="playSong('song1.mp3','favorite mo hehe')">
+                💖 Reminds Me of You
+            </button>
+
+            <button class="song-btn" onclick="playSong('song2.mp3','yeehaw')">
+                🎁 A song I dedicate to you
+            </button>
+
+            <button class="song-btn" onclick="playSong('song3.mp3','kahit magkaaway tayo madalas dahil inaaway mo ako, i gotchu boo!')">
+                🌧️ When You’re Down
+            </button>
+        </div>
+
+        <p id="songMessage"></p>
+        <audio id="player" controls></audio>
+    </div>
+
+    <!-- LETTER -->
+    <div class="section fade">
+        <h2>OPENNNNNNNNNN 💌</h2>
+
+        <button class="song-btn" onclick="openLetter()">
+            Open My Message ❤️
+        </button>
+
+        <div id="letterBox" class="letter">
+            <p>
+                Happy Anniversary Mahal! Thank you for staying with me for 3 strong years. Know that I see all your efforts; sa work, sa relationship natin and for yourself. I sincerely apologize for the wrong things that i've done to you, and also for the things that I didn't do to satisfy you. I am really grateful for you mahal. Thank you for being an inspiration. Thank you dahil you keep on believing in me and reminding me on the important things I sometimes forgot. I promise to be a better partner pa sa'yo, A partner you can rely on. Happy Anniversary, mahal kita! Cheers to 3 years! IMISSYOUUUUUUUUUUUU AND SEE YOU SOONEST PRETTY LITTLE LIA!
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+/* 🔐 LOCK CODE — CHANGE THIS */
+const SECRET_CODE = "capybaby";
+
+function checkCode() {
+    const input = document.getElementById("codeInput").value;
+    const error = document.getElementById("error");
+
+    if (input === SECRET_CODE) {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("mainSite").style.display = "block";
+    } else {
+        error.innerText = "Wrong code 💔 Try again";
+    }
+}
+
+/* 📸 PHOTOS — CHANGE THIS */
+const photos = [
+    "photo1.jpg",
+    "photo2.jpg",
+    "photo3.jpg",
+    "photo4.JPG",
+    "photo5.HEIC",
+    "photo6.JPG",
+    "photo7.jpg",
+    "photo8.jpg",
+    "photo9.jpg",
+    "photo10.jpg"
+];
+
+const gallery = document.getElementById("gallery");
+
+photos.forEach(photo => {
+    const img = document.createElement("img");
+    img.src = photo;
+    gallery.appendChild(img);
+});
+
+/* 🎵 SONG PLAYER */
+function playSong(file, message) {
+    const player = document.getElementById("player");
+    const text = document.getElementById("songMessage");
+
+    player.src = file;
+    player.play();
+
+    text.style.opacity = 0;
+
+    setTimeout(() => {
+        text.innerText = message;
+        text.style.opacity = 1;
+    }, 300);
+}
+
+/* 💌 LETTER */
+function openLetter() {
+    const letter = document.getElementById("letterBox");
+
+    letter.style.display = "block";
+
+    setTimeout(() => {
+        letter.classList.add("show");
+    }, 100);
+}
+
+</script>
+
+</body>
+</html>
